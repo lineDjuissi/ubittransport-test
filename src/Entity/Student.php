@@ -9,7 +9,9 @@ use App\Repository\StudentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -20,6 +22,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     denormalizationContext={"groups"={"student:write"}}
  * )
  * @ORM\Entity(repositoryClass=StudentRepository::class)
+ * @UniqueEntity(
+ *     fields={"name", "surname", "birthday"},
+ *     message="This student already exists"
+ * )
  */
 class Student
 {
@@ -32,28 +38,27 @@ class Student
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
+     * @Assert\NotBlank(message="Name is required")
      * @Groups({"student:read", "student:write"})
      */
     private string $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
+     * @Assert\NotBlank(message="surname is required")
      * @Groups({"student:read", "student:write"})
      */
     private string $surname;
 
     /**
      * @ORM\Column(type="date")
-     *
+     * @Assert\NotBlank(message="Birthday is required")
      * @Groups({"student:read", "student:write"})
      */
-    private string $birthday;
+    private \DateTimeInterface $birthday;
 
     /**
      * @ORM\OneToMany(targetEntity=Score::class, mappedBy="student", orphanRemoval=true)
-     *
      * @Groups({"student:read"})
      */
     private Collection $scores;

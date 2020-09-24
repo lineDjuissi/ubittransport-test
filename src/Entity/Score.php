@@ -7,6 +7,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ScoreRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -25,6 +26,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     itemOperations={"get"}
  * )
  * @ORM\Entity(repositoryClass=ScoreRepository::class)
+ * @UniqueEntity(
+ *     fields={"course"},
+ *     message="This course already exists"
+ * )
  */
 class Score
 {
@@ -37,14 +42,15 @@ class Score
 
     /**
      * @ORM\Column(type="float")
-     *@Assert\Range(min="0", max="20")
+     * @Assert\Range(min="0", max="20")
+     * @Assert\NotBlank(message="Course value is required")
      * @Groups({"score:write", "score:read", "student:read"})
      */
     private float $value;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
+     * @Assert\NotBlank(message="Course name is required")
      * @Groups({"score:write", "score:read", "student:read"})
      */
     private string $course;
